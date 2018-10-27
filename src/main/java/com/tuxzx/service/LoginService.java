@@ -25,6 +25,10 @@ public class LoginService {
         return null;
     }
 
+    public Map loginAdmin(String username, String role) {
+        return userDao.getHomeInfo(username);
+    }
+
     public Map loginCheckAjax (String username, String password, String role) {
         Map map = new HashMap();
         if (role.equals("student")&&userDao.matchUser(username, password)) {

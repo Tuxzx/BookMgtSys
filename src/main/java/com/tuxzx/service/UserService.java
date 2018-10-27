@@ -58,6 +58,7 @@ public class UserService {
         map.put("book_count", book.getCount());
         map.put("book_intime", book.getInTime());
         map.put("book_note", book.getNote());
+        map.put("book_type", bookDao.getTypeName(book.getType()));
         return map;
     }
 }

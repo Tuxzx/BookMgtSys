@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class BookDaoImpl implements BookDao {
@@ -36,6 +37,8 @@ public class BookDaoImpl implements BookDao {
     private static final String INSERT_BOOK = "insert into book_info " +
             "(book_isbn, book_name, book_author, book_pub, book_count, book_intime, book_type, book_note) " +
             "values (?,?,?,?,?,?,?,?);";
+
+    private static final String QUERY_NEWER_BOOL_LIMIT = "select book_name, book_isbn, book_intime from book_info order by book_intime desc limit ?;";
 
 
 
@@ -84,7 +87,7 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public String getTypeName(String typeId) {
+    public String getTypeName(int typeId) {
         return jdbcTemplate.queryForObject(QUERY_TYPENAME_BY_TYPEID, new Object[]{typeId}, String.class);
     }
 
@@ -114,5 +117,12 @@ public class BookDaoImpl implements BookDao {
         return jdbcTemplate.update(REMOVE_BOOK_BY_ISBN, new Object[]{isbn})>0?true:false;
     }
 
+    public List<Book> getNewerBook(int limit) {
+        return jdbcTemplate.query(QUERY_NEWER_BOOL_LIMIT, new Object[]{limit}, new BookMapper());
+    }
 
+    @Override
+    public List<Map<String, Object>> getBookInfo() {
+        return null;
+    }
 }

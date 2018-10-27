@@ -5,6 +5,7 @@ import com.tuxzx.domain.BookType;
 import com.tuxzx.domain.Pub;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BookDao {
 
@@ -72,7 +73,7 @@ public interface BookDao {
      * @param typeId
      * @return
      */
-    String getTypeName(String typeId);
+    String getTypeName(int typeId);
 
     // PubInfo ***************************************************
 
@@ -112,5 +113,13 @@ public interface BookDao {
      */
     boolean removeBook(String isbn);
 
+    /**
+     * 获取最新入馆的书信息
+     * @param limit 查询数量限制
+     * @return
+     */
+    public List<Book> getNewerBook(int limit);
+
+    public List<Map<String, Object>> getBookInfo();
 
 }

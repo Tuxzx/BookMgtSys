@@ -5,8 +5,12 @@ import com.tuxzx.domain.ReturnInfo;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface BorrowDao {
+    public static final int ALL = 0;
+    public static final int NOTRETURNED = 1;
+    public static final int RETURNED = 2;
 
     /**
      * 获取所有借书信息
@@ -63,4 +67,18 @@ public interface BorrowDao {
      */
     boolean toTicket(String stuId, String bookISBN, int overDate, float fee);
 
+
+    /**
+     * 获取借还信息from借阅表和还书表的联合视图中
+     * @param stuId
+     * @param args 0 所有的； 1 已借未还；2 已借已还
+     * @return 一组map对象
+     */
+    List<Map<String, Object>> getUserBookInfoWithBorrowAndReturn(String stuId, int args);
+
+    /**
+     * 获取所有书借阅的次数
+     * @return
+     */
+    List<Map<String, Object>> getBookBorrowedCountAll();
 }

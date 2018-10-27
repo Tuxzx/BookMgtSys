@@ -17,19 +17,19 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "getBookByType", produces = "text/html;charset=UTF-8")
+    @RequestMapping(value = "/getBookByType", produces = "text/html;charset=UTF-8")
     @ResponseBody
     public String showBookByType (@Nullable int type) {
         return StringUtils.mapToJson(userService.getAllBookByTypeWithHtml(type));
     }
 
-    @RequestMapping(value = "getBookAllType", produces = "text/html;charset=UTF-8")
+    @RequestMapping(value = "/getBookAllType", produces = "text/html;charset=UTF-8")
     @ResponseBody
     public String showBookAllType () {
         return StringUtils.mapToJson(userService.getAllBookTypeWithHtml());
     }
 
-    @RequestMapping(value = "getBookInfo", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+    @RequestMapping(value = "/getBookInfo", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     public ModelAndView getBookInfo(String isbn){
         return new ModelAndView("bookinfo",userService.getBookInfo(isbn));
     }

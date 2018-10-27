@@ -10,7 +10,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <%-- Bootshrap --%>
-    <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../statics/css/bootstrap.min.css" rel="stylesheet">
     <title>Error</title>
 </head>
 <body>
@@ -33,7 +33,7 @@
 </div>
 
 <%-- 插入jquery和 bootstrap --%>
-<script src="/resources/js/jquery.min.js"></script>
-<script src="/resources/js/bootstrap.min.js"></script>
+<script src="../statics/js/jquery.min.js"></script>
+<script src="../statics/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -16,5 +16,5 @@
     </bean>
     
 
-    <mvc:resources mapping="/statics/**" location="statics/"/>
+    <mvc:resources mapping="/statics/**" location="WEB-INF/statics/"/>
 </beans>

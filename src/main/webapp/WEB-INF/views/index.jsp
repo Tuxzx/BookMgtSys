@@ -12,7 +12,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>图书信息管理系统</title>
-  <link rel="stylesheet" href="/resources/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../statics/css/bootstrap.min.css">
 </head>
 <body>
 <div class="container">
@@ -47,7 +47,7 @@
         </div>
         <div class="form-group">
           <label for="password">密码</label>
-          <input type="text" name="password" id="password" class="form-control" placeholder="请输入密码" required>
+          <input type="password" name="password" id="password" class="form-control" placeholder="请输入密码" required>
         </div>
         <div class="form-group btn-group" data-toggle="buttons">
           <label class="btn btn-default active">
@@ -66,8 +66,7 @@
 
 
 
-<script src="/resources/js/jquery.min.js"></script>
-<script src="/resources/js/bootstrap.min.js"></script>
-<script src="/resources/js/loginModule.js"></script>
+<%@include file="component_script.jsp"%>
+<script src="../statics/js/loginModule.js"></script>
 </body>
 </html>
