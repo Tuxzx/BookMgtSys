@@ -9,9 +9,14 @@ import com.tuxzx.domain.BookType;
 import com.tuxzx.domain.Pub;
 import com.tuxzx.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +25,7 @@ public class BookDaoImpl implements BookDao {
 
     private static final String QUERY_BOOK_ALL = "select * from book_info;";
     private static final String QUERY_BOOK_BY_NAME = "select * from book_info where book_name regexp ?;";
+    private static final String QUERY_READ_USER_LIST = "select distinct stu_name from borrow_info, student_info where borrow_info.stu_id = student_info.stu_id and book_isbn = ?;";
     private static final String QUERY_BOOK_BY_ISBN = "select * from book_info where book_isbn = ?;"; //不支持模糊查询
     private static final String QUERY_BOOK_BY_AUTHOR = "select * from book_info where book_author regexp ?;";
     private static final String QUERY_BOOK_BY_PUB = "select * from book_info where book_pub regexp ?;";
@@ -37,8 +43,8 @@ public class BookDaoImpl implements BookDao {
     private static final String INSERT_BOOK = "insert into book_info " +
             "(book_isbn, book_name, book_author, book_pub, book_count, book_intime, book_type, book_note) " +
             "values (?,?,?,?,?,?,?,?);";
-
-    private static final String QUERY_NEWER_BOOL_LIMIT = "select book_name, book_isbn, book_intime from book_info order by book_intime desc limit ?;";
+    private static final String UPDATE_BOOK = "update book_info set book_name = ?, book_author = ?, book_pub = ?, book_count = ?, book_intime = ?, book_type = ?, book_note = ? where book_isbn = ?;";
+    private static final String QUERY_NEWER_BOOL_LIMIT = "select * from book_info order by book_intime desc limit ?;";
 
 
 
@@ -52,12 +58,37 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book getBookByISBN(String isbn) {
-        return jdbcTemplate.queryForObject(QUERY_BOOK_BY_ISBN, new Object[]{isbn}, new BookMapper());
+        Book book = null;
+        try {
+            book = jdbcTemplate.queryForObject(QUERY_BOOK_BY_ISBN, new Object[]{isbn}, new BookMapper());
+        }catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+        }finally {
+            return book;
+        }
     }
 
     @Override
     public List<Book> getBookByName(String name) {
-        return jdbcTemplate.query(QUERY_BOOK_BY_NAME, new Object[]{StringUtils.toRegexp(name, name.length())}, new BookMapper());
+        List<Book> list = null;
+        try {
+            list = jdbcTemplate.query(QUERY_BOOK_BY_NAME, new Object[]{StringUtils.toRegexp(name, name.length())}, new BookMapper());
+        }catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+        }finally {
+            return list;
+        }
+    }
+
+    public List<String> getReadUserList(String isbn) {
+        final List<String> strings = new ArrayList<>();
+        jdbcTemplate.query(QUERY_READ_USER_LIST, new Object[]{isbn}, new RowCallbackHandler() {
+            @Override
+            public void processRow(ResultSet rs) throws SQLException {
+                strings.add(rs.getString("stu_name"));
+            }
+        });
+        return strings;
     }
 
     @Override
@@ -88,7 +119,15 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public String getTypeName(int typeId) {
-        return jdbcTemplate.queryForObject(QUERY_TYPENAME_BY_TYPEID, new Object[]{typeId}, String.class);
+        String str = null;
+        try {
+            str = jdbcTemplate.queryForObject(QUERY_TYPENAME_BY_TYPEID, new Object[]{typeId}, String.class);
+        }catch (EmptyResultDataAccessException e) {
+            e.printStackTrace();
+            str = null;
+        }
+
+        return str;
     }
 
     @Override
@@ -108,21 +147,29 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public boolean addBook(Book book) {
+        if (getBookByISBN(book.getISBN())!=null) {
+            return false;
+        }
         return jdbcTemplate.update(INSERT_BOOK, new Object[]{book.getISBN(), book.getName(), book.getAuthor(),
-                book.getPub(), book.getCount(), book.getInTime(), book.getType(), book.getNote()})>0?true:false;
+                book.getPub(), book.getCount(), book.getInTime(), book.getType(), book.getNote()}) > 0 ? true : false;
+    }
+
+    @Override
+    public boolean updateBook(Book book) {
+        return jdbcTemplate.update(UPDATE_BOOK, new Object[]{book.getName(), book.getAuthor(), book.getPub(),
+                book.getCount(), book.getInTime(), book.getType(), book.getNote(), book.getISBN()})>0?true:false;
     }
 
     @Override
     public boolean removeBook(String isbn) {
+        if (getBookByISBN(isbn)==null) {
+            return true;
+        }
         return jdbcTemplate.update(REMOVE_BOOK_BY_ISBN, new Object[]{isbn})>0?true:false;
     }
 
+    @Override
     public List<Book> getNewerBook(int limit) {
         return jdbcTemplate.query(QUERY_NEWER_BOOL_LIMIT, new Object[]{limit}, new BookMapper());
-    }
-
-    @Override
-    public List<Map<String, Object>> getBookInfo() {
-        return null;
     }
 }

@@ -1,6 +1,7 @@
 package com.tuxzx.service;
 
 import com.tuxzx.dal.UserDao;
+import com.tuxzx.domain.Manager;
 import com.tuxzx.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,14 +20,24 @@ public class LoginService {
             return userDao.getHomeInfo(username);
         }
         if (role.equals("manager")&&userDao.matchManager(username, password)){
-            return userDao.getHomeInfo(username);
-
+            Map map = new HashMap();
+            Manager manager = userDao.getManager(username);
+            map.put("nickname", manager.getName());
+            return map;
         }
         return null;
     }
 
     public Map loginAdmin(String username, String role) {
-        return userDao.getHomeInfo(username);
+        if (role.equals("student")) {
+            return userDao.getHomeInfo(username);
+        }else if (role.equals("manager")){
+            Map map = new HashMap();
+            Manager manager = userDao.getManager(username);
+            map.put("nickname", manager.getName());
+            return map;
+        }
+        return null;
     }
 
     public Map loginCheckAjax (String username, String password, String role) {

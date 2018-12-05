@@ -11,6 +11,19 @@ public class Student {
     private String pro;
     private Date inTime;
 
+    public Student() {
+    }
+
+    public Student(String id, String name, String gender, int age, String tel, String pro, Date inTime) {
+        this.id = id;
+        this.name = name;
+        this.gender = gender;
+        this.age = age;
+        this.tel = tel;
+        this.pro = pro;
+        this.inTime = inTime;
+    }
+
     @Override
     public String toString() {
         return "id: "+id+"\nname: "+name+"\ngender: "+gender+"\nage: "+age+"\ntel: "+tel+"\npro: "+pro+"\ninTime: "+inTime;

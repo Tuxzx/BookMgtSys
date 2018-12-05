@@ -12,6 +12,20 @@ public class Book {
     private int type;
     private String note;
 
+    public Book() {
+    }
+
+    public Book(String ISBN, String name, String author, String pub, int count, Date inTime, int type, String note) {
+        this.ISBN = ISBN;
+        Name = name;
+        Author = author;
+        this.pub = pub;
+        this.count = count;
+        this.inTime = inTime;
+        this.type = type;
+        this.note = note;
+    }
+
     public String getISBN() {
         return ISBN;
     }

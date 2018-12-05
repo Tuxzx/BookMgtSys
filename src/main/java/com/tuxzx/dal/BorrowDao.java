@@ -13,6 +13,13 @@ public interface BorrowDao {
     public static final int RETURNED = 2;
 
     /**
+     * 借阅是否存在
+     * @param borrowId
+     * @return
+     */
+    public boolean isBorrowExist(int borrowId);
+
+    /**
      * 获取所有借书信息
      * @return
      */
@@ -52,11 +59,19 @@ public interface BorrowDao {
     /**
      * 还书
      * @param stuId 学生id
-     * @param bookId 书籍id
+     * @param borrow_id 学生id
+     * @param bookIsbn 书籍id
      * @param returnDate 归还日期
      * @return
      */
-    boolean toReturn(String stuId, String bookId, Date returnDate);
+    boolean toReturn(String stuId, int borrow_id, String bookIsbn, Date returnDate);
+
+    /**
+     * 是否归还
+     * @param borrow_id
+     * @return
+     */
+    boolean isReturned(int borrow_id);
 
     /**
      * 开具罚单
@@ -67,7 +82,6 @@ public interface BorrowDao {
      */
     boolean toTicket(String stuId, String bookISBN, int overDate, float fee);
 
-
     /**
      * 获取借还信息from借阅表和还书表的联合视图中
      * @param stuId
@@ -75,6 +89,13 @@ public interface BorrowDao {
      * @return 一组map对象
      */
     List<Map<String, Object>> getUserBookInfoWithBorrowAndReturn(String stuId, int args);
+
+    /**
+     * 获取所有图书的借阅和归还信息
+     * from视图
+     * @return
+     */
+    List<Map<String, Object>> getAllBookInfoWithBorrowAndReturn();
 
     /**
      * 获取所有书借阅的次数

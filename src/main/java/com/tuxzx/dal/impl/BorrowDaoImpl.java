@@ -9,7 +9,6 @@ import com.tuxzx.domain.ReturnInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
@@ -23,13 +22,15 @@ import java.util.Map;
 @Repository
 public class BorrowDaoImpl implements BorrowDao {
 
+    private static final String QUERY_BORROW_COUNT = "select count(borrow_id) from borrow_info where borrow_id = ?;";
     private static final String QUERY_BORROW_INFO_ALL = "select * from borrow_info;";
     private static final String QUERY_BORROW_INFO_BY_STUID = "select * from borrow_info where stu_id = ?;";
     private static final String INSERT_BORROW_INFO = "insert into borrow_info (stu_id, book_isbn, borrow_date, expect_date) VALUES (?,?,?,?);";
 
     private static final String QUERY_RETURN_INFO_ALL = "select * from return_info;";
     private static final String QUERY_RETURN_INFO_BY_STUID = "select * from return_info where stu_id = ?;";
-    private static final String INSERT_RETURN_INFO = "insert into return_info (stu_id, book_isbn, return_date) VALUES (?,?,?);";
+    private static final String INSERT_RETURN_INFO = "insert into return_info (stu_id, borrow_id, book_isbn, return_date) VALUES (?,?,?,?);";
+    private static final String QUERY_ISRETURNED_COUNT = "select count(borrow_id) from return_info where borrow_id = ?;";
 
     private static final String INSERT_TICKET_INFO = "insert into ticket_info (stu_id, book_isbn, over_date, ticket_fee) VALUES (?,?,?,?);";
 
@@ -40,6 +41,8 @@ public class BorrowDaoImpl implements BorrowDao {
     // 借出去已还
     private static final String VIEW_QUERY_BORROW_AND_RETURN_ISNOTNULL= "select * from view_borrow_return_info where return_id is not null and stu_id = ? order by borrow_date desc";
 
+    private static final String VIEW_QUERY_BORROW_AND_RETURN_ALLUSER= "select * from view_borrow_return_info order by borrow_date desc";
+
     // 借书次数倒序排行
     private static final String VIEW_QUERY_COUNT_BOOK = "select book_name, book_isbn, count(book_isbn) as count from view_borrow_info group by book_isbn order by count desc;";
 
@@ -48,6 +51,11 @@ public class BorrowDaoImpl implements BorrowDao {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Override
+    public boolean isBorrowExist(int borrowId) {
+        return jdbcTemplate.queryForObject(QUERY_BORROW_COUNT, new Object[]{borrowId}, Integer.class)>0?true:false;
+    }
 
     @Override
     public List<BorrowInfo> getAllBorrowInfo() {
@@ -61,6 +69,7 @@ public class BorrowDaoImpl implements BorrowDao {
 
     @Override
     public boolean toBorrow(String stuId, String bookISBN, Date borrowDate, Date expectDate) {
+
         return jdbcTemplate.update(INSERT_BORROW_INFO, new Object[]{stuId, bookISBN, borrowDate, expectDate})>0?true:false;
     }
 
@@ -75,8 +84,13 @@ public class BorrowDaoImpl implements BorrowDao {
     }
 
     @Override
-    public boolean toReturn(String stuId, String bookISBN, Date returnDate) {
-        return jdbcTemplate.update(INSERT_RETURN_INFO, new Object[]{stuId, bookISBN, returnDate})>0?true:false;
+    public boolean toReturn(String stuId, int borrow_id, String bookISBN, Date returnDate) {
+        return jdbcTemplate.update(INSERT_RETURN_INFO, new Object[]{stuId, borrow_id, bookISBN, returnDate})>0?true:false;
+    }
+
+    @Override
+    public boolean isReturned(int borrow_id) {
+        return jdbcTemplate.queryForObject(QUERY_ISRETURNED_COUNT, new Object[]{borrow_id}, Integer.class)>0?true:false;
     }
 
     @Override
@@ -114,6 +128,33 @@ public class BorrowDaoImpl implements BorrowDao {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+        return list;
+    }
+
+    public List<Map<String, Object>> getAllBookInfoWithBorrowAndReturn() {
+        final List<Map<String, Object>> list = new ArrayList();
+        jdbcTemplate.query(VIEW_QUERY_BORROW_AND_RETURN_ALLUSER, new RowCallbackHandler() {
+            @Override
+            public void processRow(ResultSet rs) throws SQLException {
+                rs.beforeFirst();
+                while (rs.next())
+                    try {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("borrow_id", rs.getInt("borrow_id"));
+                        map.put("return_id", rs.getInt("return_id"));
+                        map.put("stu_id", rs.getString("stu_id"));
+                        map.put("stu_name", rs.getString("stu_name"));
+                        map.put("book_isbn", rs.getString("book_isbn"));
+                        map.put("book_name", rs.getString("book_name"));
+                        map.put("borrow_date", rs.getDate("borrow_date"));
+                        map.put("expect_date", rs.getDate("expect_date"));
+                        map.put("return_date", rs.getString("return_date"));
+                        list.add(map);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
             }
         });
         return list;

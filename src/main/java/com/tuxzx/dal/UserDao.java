@@ -3,6 +3,7 @@ package com.tuxzx.dal;
 import com.tuxzx.domain.Manager;
 import com.tuxzx.domain.Student;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserDao {
@@ -28,6 +29,13 @@ public interface UserDao {
      * @return
      */
     Student getStudent(String stuId);
+
+    /**
+     * 获取学生信息 模糊查询
+     * @param stuName
+     * @return
+     */
+    List<Student> getStudents(String stuName);
 
     /**
      * 更新电话信息
@@ -117,5 +125,11 @@ public interface UserDao {
      * @return
      */
     Map<String, Object> getHomeInfo(String stuId);
+
+    List<String> getAllNotification();
+
+    String getNewerNotification();
+
+    boolean updateNotification(String str);
 
 }

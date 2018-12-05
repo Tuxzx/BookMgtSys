@@ -23,34 +23,31 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li class=""><a href="/login">主页<span class="sr-only">(current)</span></a></li>
-                <li><a href="/user/getBorrowedBook">借阅状态</a></li>
+                <li><a href="/user/toBorrowedBook">借阅状态</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">更多<span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/user/getBorrowedBookHistory">借阅历史记录</a></li>
+                        <li><a href="/user/toBorrowedBookHistory">借阅历史记录</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="/user/getBorrowedBookRanking">本周借阅排行</a></li>
+                        <li><a href="/user/toBorrowedBookRanking">本周借阅排行</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="#">入馆新书</a></li>
+                        <li><a href="/toNewerBookList">入馆新书</a></li>
                     </ul>
                 </li>
             </ul>
-            <form class="navbar-form navbar-left">
+            <form id="nav_search" class="navbar-form navbar-left" method="post" action="/getBookByNameNav">
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search">
+                    <input type="text" class="form-control" name="name" placeholder="请输入书名查询" required>
                 </div>
-                <button type="submit" class="btn btn-default">Submit</button>
+                <button type="submit" class="btn btn-default">查询</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">Message <span class="badge">100</span></a></li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">${nickname} <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="#"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> ${nickname}</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> 安全退出</a></li>
+                        <li><a href="/exitSystem"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> 安全退出</a></li>
                     </ul>
                 </li>
             </ul>

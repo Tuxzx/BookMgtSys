@@ -10,8 +10,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>图书信息管理系统</title>
+    <title>主页————图书信息管理系统</title>
     <link rel="stylesheet" href="../statics/css/bootstrap.min.css">
 </head>
 <body>
@@ -77,7 +76,9 @@
             <div class="well" >
                 <h4>通知</h4>
                 <!-- 通知注入id -->
-                <p id="notification">Contents ...</p>
+                <p id="notification">
+                    ${notification}
+                </p>
             </div>
         </div>
     </div>

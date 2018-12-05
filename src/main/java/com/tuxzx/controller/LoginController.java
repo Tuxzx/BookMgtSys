@@ -30,15 +30,20 @@ public class LoginController {
     public ModelAndView toLogin(String username, String password, String role, HttpSession session) {
         ModelAndView modelAndView = null;
         Map map = loginService.login(username, password, role);
-        if (map==null) {
+        if (map == null) {
             modelAndView = new ModelAndView("error");
             modelAndView.addObject("message", "你好像走丢了,看看其他的内容吧！");
             return modelAndView;
         }
-        modelAndView = new ModelAndView("home");
+        if (role.equals("student")) {
+            modelAndView = new ModelAndView("home");
+
+        }else if (role.equals("manager")){
+            modelAndView = new ModelAndView("management_home");
+        }
         modelAndView.addAllObjects(map);
         session.setAttribute("username", username);
-        session.setAttribute("nickname", map.get("username"));
+        session.setAttribute("nickname", map.get("nickname"));
         session.setAttribute("role",role);
         return modelAndView;
     }
@@ -51,7 +56,11 @@ public class LoginController {
             modelAndView = new ModelAndView("error");
             modelAndView.addObject("message","您暂未登陆，点击按钮到登陆页面！");
         }else {
-            modelAndView = new ModelAndView("home");
+            if (session.getAttribute("role").equals("student")) {
+                modelAndView = new ModelAndView("home");
+            } else {
+                modelAndView = new ModelAndView("management_home");
+            }
             modelAndView.addAllObjects(loginService.loginAdmin((String) session.getAttribute("username"), (String) session.getAttribute("role")));
         }
         return modelAndView;

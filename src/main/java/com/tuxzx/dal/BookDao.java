@@ -32,12 +32,18 @@ public interface BookDao {
     List<Book> getBookByName(String name);
 
     /**
+     * 获区对应书籍的阅读者列表
+     * @param isbn
+     * @return
+     */
+    List<String> getReadUserList(String isbn);
+
+    /**
      * 根据作者获取
      * @param author
      * @return
      */
     List<Book> getBookByAuthor(String author);
-
 
     /**
      * 根据出版社获取
@@ -107,6 +113,13 @@ public interface BookDao {
     boolean addBook(Book book);
 
     /**
+     * 更新书信息
+     * @param book
+     * @return
+     */
+    boolean updateBook(Book book);
+
+    /**
      * 删除书信息
      * @param isbn
      * @return
@@ -118,8 +131,7 @@ public interface BookDao {
      * @param limit 查询数量限制
      * @return
      */
-    public List<Book> getNewerBook(int limit);
+    List<Book> getNewerBook(int limit);
 
-    public List<Map<String, Object>> getBookInfo();
 
 }
